@@ -99,6 +99,8 @@ data "template_file" "init_elasticsearch" {
     node3        = aws_instance.elastic_nodes[2].private_ip
   }
 }
+
+
 resource "null_resource" "move_elasticsearch_file" {
   count = 3
   connection {
@@ -111,6 +113,8 @@ resource "null_resource" "move_elasticsearch_file" {
     content     = data.template_file.init_elasticsearch[count.index].rendered
     destination = "elasticsearch.yml"
   }
+
+
   provisioner "file" {
     source      = "auth.sh"
     destination = "auth.sh"
@@ -119,6 +123,19 @@ resource "null_resource" "move_elasticsearch_file" {
     source      = "bootstrap.sh"
     destination = "bootstrap.sh"
   }
+   provisioner "file" {
+    source      = "elastic-certificates.p12"
+    destination = "elastic-certificates.p12"
+  }
+   provisioner "file" {
+    source      = "elastic-stack-ca.p12"
+    destination = "elastic-stack-ca.p12"
+  }
+   provisioner "file" {
+    source      = "certGen.sh"
+    destination = "certGen.sh"
+  }
+   
 }
 resource "null_resource" "start_es" {
   depends_on = [
@@ -143,6 +160,8 @@ resource "null_resource" "start_es" {
       "sudo rm /etc/elasticsearch/elasticsearch.yml",
       "sudo cp elasticsearch.yml /etc/elasticsearch/",
       "sudo cp auth.sh /usr/share/elasticsearch/",
+      "sudo cp elastic-certificates.p12 /etc/elasticsearch/ ",
+      "sudo cp elastic-stack-ca.p12 /etc/elasticsearch/",
       "sudo cp bootstrap.sh /usr/share/elasticsearch/",
       "cd /usr/share/elasticsearch/",
       "sudo chmod +x auth.sh",

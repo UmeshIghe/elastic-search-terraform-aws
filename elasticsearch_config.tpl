@@ -87,3 +87,8 @@ cluster.initial_master_nodes: ["${node1}", "${node2}","${node3}"]
 #
 #action.destructive_requires_name: true
 xpack.security.enabled: true
+xpack.security.transport.ssl.enabled: true
+xpack.security.transport.ssl.verification_mode: certificate 
+xpack.security.transport.ssl.client_authentication: required
+xpack.security.transport.ssl.keystore.path: elastic-certificates.p12
+xpack.security.transport.ssl.truststore.path: elastic-certificates.p12
